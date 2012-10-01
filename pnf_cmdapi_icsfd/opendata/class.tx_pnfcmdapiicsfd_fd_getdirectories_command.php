@@ -1,0 +1,284 @@
+<?php
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2012 Plan.Net <technique@in-cite.net>
+*  All rights reserved
+*
+*  This script is part of the TYPO3 project. The TYPO3 project is
+*  free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
+
+/**
+ * @file class.tx_pnfcmdapiicsfd_fd_getdirectories_command.php
+ *
+ * Short description of the class cal_getcategories
+ * 
+ * @author    Plan.Net <technique@in-cite.net>
+ * @package    TYPO3.pnf_cmdapi_icsfd
+ */
+
+class tx_pnfcmdapiicsfd_fd_getdirectories_command extends tx_icsodcoreapi_command
+{
+	var $params = array();
+
+	// *************************
+	// * User inclusions 0
+	// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+	// *************************
+	
+	// ... (Add additional operations here) ...
+	
+	// * End user inclusions 0
+
+	
+	
+	/**
+	 * Executes the command.
+	 *
+	 * @param	array	$params The command parameters.
+	 * @param	XMLWriter	$xmlwriter The XML Writer for output.
+	 */
+	function execute(array $params, XMLWriter $xmlwriter)
+	{
+		$params = array_merge($this->params, $params);
+		
+		// *************************
+		// * User inclusions 1
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 1
+
+		
+		// Create a datasource object for retrieving directories
+		$datasource = t3lib_div::getUserObj($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['pnf_cmdapi_icsfd']['datasource']['directories']);
+		
+		$directories = array();
+		
+		$directories = $datasource->getDirectoriesAll($params);
+		
+		// *************************
+		// * User inclusions 2
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 2
+
+		
+		$elements = $this->transformResultsForOutput($directories);
+		makeError($xmlwriter, SUCCESS_CODE, SUCCESS_TEXT);
+		
+		// *************************
+		// * User inclusions 3
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 3
+
+		
+		$this->writeOutput($xmlwriter, $elements);
+	}
+	
+	/**
+	 * Transforms results for output
+	 *
+	 * @param	array	$directories A collection of directories
+	 *
+	 * @return	Elements array
+	 */	
+	protected function transformResultsForOutput(array $directories)
+	{
+		// *************************
+		// * User inclusions 4
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 4
+
+		$elements = array();
+		foreach ($directories as $directory)
+		{
+			$element = array();
+			
+			$element['id'] = (string)$directory['id'];
+			$element['crdate'] = (string)$directory['crdate'];
+			$element['category'] = (string)$directory['category'];
+			$element['title'] = $directory['title'];
+			$element['description'] = $directory['description'];
+			$element['image'] = $directory['image'];
+			$element['gallery'] = $directory['gallery'];
+			$element['address'] = $directory['address'];
+			$element['latitude'] = $directory['latitude'];
+			$element['longitude'] = $directory['longitude'];
+			$element['link'] = $directory['link'];
+
+			// *************************
+			// * User inclusions 5
+			// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+			// *************************
+			
+			// ... (Add additional operations here) ...
+			$element['crdate'] = date('Y-m-d H:i:s', $directory['crdate']);
+			// * End user inclusions 5
+
+			
+			$elements[] = $element;
+		}
+		
+		// *************************
+		// * User inclusions 6
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 6
+
+		
+		return $elements;
+	}
+	
+	/**
+	 * Writes output
+	 *
+	 * @param	XMLWriter	$xmlwriter the writer
+	 * @param	array	$elements
+	 *
+	 * @return void
+	 */
+	 protected function writeOutput(XMLWriter $xmlwriter, array $elements)
+	{
+		// *************************
+		// * User inclusions 7
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 7
+
+		$xmlwriter->startElement('data');
+		// *************************
+		// * User inclusions 8
+		// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+		// *************************
+		
+		// ... (Add additional operations here) ...
+		
+		// * End user inclusions 8
+
+		foreach ($elements as $element)
+		{
+			$xmlwriter->startElement('directory');
+			// *************************
+			// * User inclusions 9
+			// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+			// *************************
+			
+			// ... (Add additional operations here) ...
+			
+			// * End user inclusions 9
+
+			foreach ($element as $key => $value)
+			{
+				// *************************
+				// * User inclusions 10
+				// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+				// *************************
+				
+				// ... (Add additional operations here) ...
+				switch ($key)
+				{
+					case 'image':
+					case 'gallery':
+						$this->writeOutputLink($xmlwriter, $key, t3lib_div::trimExplode(',', $value, true));
+						break;
+					default:
+				
+				// * End user inclusions 10
+
+				$xmlwriter->startElement($key);
+				$xmlwriter->text($value);
+				$xmlwriter->endElement();
+				// *************************
+				// * User inclusions 11
+				// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+				// *************************
+				
+				// ... (Add additional operations here) ...
+				}
+				// * End user inclusions 11
+
+			}
+			// *************************
+			// * User inclusions 12
+			// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+			// *************************
+			
+			// ... (Add additional operations here) ...
+			
+			// * End user inclusions 12
+
+			$xmlwriter->endElement(); 
+		}
+		$xmlwriter->endElement();
+	}
+	
+	// *************************
+	// * User inclusions 13
+	// * DO NOT DELETE OR CHANGE THOSE COMMENTS
+	// *************************
+	
+	// ... (Add additional operations here) ...
+	/**
+	 * Writes output for links
+	 *
+	 * @param	XMLWriter	$xmlwriter the writer
+	 * @param	string		$elname: Element's name
+	 * @param	array		$link: Array of links
+	 *
+	 * @return void
+	 *
+	 */
+	private function writeOutputLink(XMLWriter $xmlwriter, $elname, array $links) 
+	{
+		$xmlwriter->startElement($elname);
+		foreach ($links as $link)
+		{
+			$xmlwriter->startElement('url');
+			$xmlwriter->text($link);	
+			$xmlwriter->endElement();
+		}
+		$xmlwriter->endElement();		
+	}
+	// * End user inclusions 13
+
+	
+} // End of class tx_pnfcmdapiicsfd_fd_getdirectories_command
+
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/pnf_cmdapi_icsfd/opendata/class.tx_pnfcmdapiicsfd_fd_getdirectories_command.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/pnf_cmdapi_icsfd/opendata/class.tx_pnfcmdapiicsfd_fd_getdirectories_command.php']);
+}
+?>
